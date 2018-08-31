@@ -192,4 +192,21 @@ class SiteController extends Controller
         }
     }
 
+     /**
+     * Delete action.
+     *
+     * @return string
+     */
+    public function actionDelete($id){
+        $site = new \app\models\Site;
+        $r = $site->findOne($id);
+
+        if(!$r->delete()){
+            $this->session["messages"] = ["type"=> "danger", "message"=>$r->getErrors()];
+        }else{
+            $this->session["messages"] = ["type"=> "success", "message"=>["success"=>"Site successfully deleted!"]];
+        }
+        return $this->redirect(['index']);
+    }
+
 }
