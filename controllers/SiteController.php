@@ -67,7 +67,7 @@ class SiteController extends Controller
      *
      * @return string
      */
-    public function actionIndex($id=1)
+    public function actionIndex($id = 1)
     {
         $limit = 25;
         $offset = ($id>1)?($id-1)*$limit:0;
@@ -78,11 +78,11 @@ class SiteController extends Controller
 
         $where = "1=1";
 
-        if(isset($_GET["q"]) && $_GET["q"]){
+        if (isset($_GET["q"]) && $_GET["q"]) {
             $d["q"] = $_GET["q"];
             $where .= " and site_name LIKE :q";
             $query= \app\models\Site::find()->with('category')->where($where)->addParams([':q'=>'%'.strtolower($d["q"]).'%']);
-        }else{
+        } else {
             $query = \app\models\Site::find()->where($where);
         }
 
@@ -91,12 +91,12 @@ class SiteController extends Controller
         
         $d["list"]= $query->limit($d["pages"]->limit)->offset($d["pages"]->offset)->orderBy("$sort $order")->all();
 
-        if($this->session["messages"]){
+        if ($this->session["messages"]) {
             $d["messages"] = $this->session["messages"];
         }
         $this->session->remove("messages");
         $this->session->remove("dataSite");
-        return $this->render('index' , ['data' => $d]);
+        return $this->render('index', ['data' => $d]);
     }
 
     /**
@@ -111,11 +111,11 @@ class SiteController extends Controller
         $d["category"] = \app\models\Category::find()->orderBy('category_name asc')->asArray()->all();
 
 
-        if($this->session["dataSite"]){
+        if ($this->session["dataSite"]) {
             $d["data"] = $this->session["dataSite"];
         }
 
-        if($this->session["messages"]){
+        if ($this->session["messages"]) {
             $d["messages"] = $this->session["messages"];
         }
         $this->session->remove("messages");
@@ -133,11 +133,11 @@ class SiteController extends Controller
         $post = Yii::$app->request->post();
         $r = new \app\models\Site;
         $r->load($post, "");
-        if($r->save()){
+        if ($r->save()) {
             $this->session["messages"] = ["type"=> "success", "message"=>["success"=>"Site successfully added."]];
             $this->session->remove("dataSite");
             return $this->redirect(['index']);
-        }else{
+        } else {
             $this->session["messages"] = ["type"=> "danger", "message"=>$r->getErrors()];
             $this->session["dataSite"] = Yii::$app->request->post();
             return $this->redirect(['create']);
@@ -151,17 +151,16 @@ class SiteController extends Controller
      */
     public function actionEdit($id)
     {
-
         $d["category"] = \app\models\Category::find()->orderBy('category_name asc')->asArray()->all();
 
-        if($this->session["dataSite"]){
+        if ($this->session["dataSite"]) {
             $d["data"] = $this->session["dataSite"];
-        }else{
+        } else {
             $site = new \app\models\Site;
             $d["data"] = $site->findOne($id)->toArray();
         }
         
-        if($this->session["messages"]){
+        if ($this->session["messages"]) {
             $d["messages"] = $this->session["messages"];
         }
         $this->session->remove("messages");
@@ -171,42 +170,42 @@ class SiteController extends Controller
         ]);
     }
 
-     /**
-     * Update action.
-     *
-     * @return string
-     */
-    public function actionUpdate($p=1)
+    /**
+    * Update action.
+    *
+    * @return string
+    */
+    public function actionUpdate($p = 1)
     {
         $post = \Yii::$app->request->post();
         $id = $post["id"];
         $r = \app\models\Site::findOne($id);
         $r->load($post, "");
-        if($r->save()){
+        if ($r->save()) {
             $this->session["messages"] = ["type"=> "success", "message"=>["success"=>"Site successfully updated!"]];
             return $this->redirect(['site/']);
-        }else{
+        } else {
             $this->session["messages"] = ["type"=> "danger", "message"=>$r->getErrors()];
             $this->session["dataProvinsi"] = $post;
             return $this->redirect(['create']);
         }
     }
 
-     /**
-     * Delete action.
-     *
-     * @return string
-     */
-    public function actionDelete($id){
+    /**
+    * Delete action.
+    *
+    * @return string
+    */
+    public function actionDelete($id)
+    {
         $site = new \app\models\Site;
         $r = $site->findOne($id);
 
-        if(!$r->delete()){
+        if (!$r->delete()) {
             $this->session["messages"] = ["type"=> "danger", "message"=>$r->getErrors()];
-        }else{
+        } else {
             $this->session["messages"] = ["type"=> "success", "message"=>["success"=>"Site successfully deleted!"]];
         }
         return $this->redirect(['index']);
     }
-
 }
